@@ -202,12 +202,4 @@ and codebase, including support with writing, editing, and code review.
 All scientific content, analyses, results, and conclusions were generated,
 verified, and approved by the authors.
 
----
 
-## License
-
-MIT License. See [LICENSE](LICENSE) for details.
-
-## Contact
-
-[Author Name] · [email@mayo.edu] · Mayo Clinic
