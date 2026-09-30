@@ -9,8 +9,7 @@ This repository contains the Python code for predicting rapid fibrosis progressi
 
 ## Overview
 
-<!-- Add pipeline overview figure here -->
-![Study Flowchart](figures/flowchart.png)
+![Study Flowchart](figures/flow_chart.png)
 The analysis is structured into four components:
 
 1. **Data preparation** — loading, preprocessing, and FIB-4 computation
