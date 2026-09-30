@@ -41,7 +41,7 @@ The analysis is structured into four components:
 | Cohort | Role | Subgroups |
 |--------|------|-----------|
 | Mayo Clinic Biobank (MCB) | Discovery + internal validation | LS (Liver-Specific), CM (Cardiometabolic) |
-| Tapestry Study | External validation | LS, CM |
+| Tapestry Study | Independent validation | LS, CM |
 
 
 ---
@@ -54,12 +54,6 @@ The analysis is structured into four components:
 - Packages: `scikit-learn`, `numpy`, `pandas`, `matplotlib`, `shap`, `xgboost`, `lightgbm`
 
 ### Step 1: Clone the Repository
-
-```bash
-git clone https://github.com/<your-username>/masld-phenotype-ml.git
-cd masld-phenotype-ml
-```
-
 ### Step 2: Install Dependencies
 
 ```bash
