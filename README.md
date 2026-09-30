@@ -1,7 +1,6 @@
-# MASLD pRFPS Prediction Pipeline
-![Python](https://img.shields.io/badge/Python-3.9%2B-blue) ![License](https://img.shields.io/badge/License-MIT-green)
+# pRFPS: A Subgroup-Specific Interpretable Risk Score for Predicting Rapid Fibrosis Progression in Metabolic Dysfunction-Associated Steatotic Liver Disease
 
-This repository contains the Python code for predicting rapid fibrosis progression in MASLD (Metabolic Dysfunction-Associated Steatotic Liver Disease) using a subgroup-specific interpretable risk score — **pRFPS**. The pipeline trains ML models on LCA-derived patient subgroups and derives clinically actionable risk scores via SHAP values.
+This repository contains the Python code for predicting rapid fibrosis progression in MASLD (Metabolic Dysfunction-Associated Steatotic Liver Disease). The pipeline trains ML models on LCA-derived patient subgroups and derives clinically actionable risk scores via SHAP values for each subgroup.
 
 > **Note:** Data from the Mayo Clinic Biobank (MCB) and Tapestry cohorts are not publicly available due to privacy restrictions.
 
