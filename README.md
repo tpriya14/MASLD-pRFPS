@@ -1,103 +1,94 @@
 # MASLD pRFPS Prediction Pipeline
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue) ![License](https://img.shields.io/badge/License-MIT-green)
- 
+
 This repository contains the Python code for predicting rapid fibrosis progression in MASLD (Metabolic Dysfunction-Associated Steatotic Liver Disease) using a subgroup-specific interpretable risk score — **pRFPS**. The pipeline trains ML models on LCA-derived patient subgroups and derives clinically actionable risk scores via SHAP values.
- 
+
 > **Note:** Data from the Mayo Clinic Biobank (MCB) and Tapestry cohorts are not publicly available due to privacy restrictions.
- 
+
 ---
- 
+
 ## Overview
- 
+
 <!-- Add pipeline overview figure here -->
- 
+
 The analysis is structured into four components:
- 
+
 1. **Data preparation** — loading, preprocessing, and FIB-4 computation
-2. **Subgroup-specific model training** — individual classifiers (RF, XGBoost, LightGBM, LR, etc.) tuned via GridSearchCV, then combined into a **stacking ensemble** with logistic regression as the meta-learner; thresholds set on out-of-fold (OOF) predictions to avoid leakage
+2. **Subgroup-specific model training** — individual classifiers (RF, XGBoost, LightGBM, LR, etc.) tuned via GridSearchCV across LS and CM subgroups
 3. **pRFPS score construction** — SHAP values from the best model converted to an interpretable integer risk score with clinically meaningful thresholds
 4. **Validation** — external validation on the Tapestry cohort with covariate shift analysis and pRFPS vs FIB-4 comparison
+
 ---
- 
+
 ## pRFPS Score Formulas
- 
+
 <!-- Add score derivation figure here -->
- 
+
 **pRFPS-LS** · Liver-Specific subgroup · Cutoff = 15
 ```
 10·I(Age > 45) + 5·I(BUN > 21) + 5·I(ALP > 109) + 3·I(Platelet < 125) + 3·I(HDL < 61)
 ```
- 
+
 **pRFPS-CM** · Cardiometabolic subgroup · Cutoff = 18
 ```
 10·I(ALP > 97) + 6·I(Platelet < 313) + 1·I(LDL > 64) + 1·I(Albumin < 13) + 1·I(AST > 39)
 ```
- 
+
 ---
- 
+
 ## Study Design
- 
+
 | Cohort | Role | Subgroups |
 |--------|------|-----------|
 | Mayo Clinic Biobank (MCB) | Discovery + internal validation | LS (Liver-Specific), CM (Cardiometabolic) |
 | Tapestry Study | External validation | LS, CM |
- 
+
 Subgroups are identified by latent class analysis (LCA) run separately — see the companion [R repository](#) for that step.
- 
+
 ---
- 
+
 ## How to Run
- 
+
 ### Prerequisites
- 
+
 - Python ≥ 3.9
 - Packages: `scikit-learn`, `numpy`, `pandas`, `matplotlib`, `shap`, `xgboost`, `lightgbm`
+
 ### Step 1: Clone the Repository
- 
+
 ```bash
 git clone https://github.com/<your-username>/masld-phenotype-ml.git
 cd masld-phenotype-ml
 ```
- 
+
 ### Step 2: Install Dependencies
- 
+
 ```bash
 pip install -r requirements.txt
 ```
- 
+
 ### Step 3: Prepare Data
- 
+
 Place your data files in the `data/` directory:
-- `data/mcb_data.tsv` — MCB cohort (tab-separated)
-- `data/tapestry_data.tsv` — Tapestry cohort (tab-separated)
+- `data/mcb_data.csv` — MCB cohort (tab-separated)
+- `data/tapestry_data.csv` — Tapestry cohort (tab-separated)
+
 See `data/README.md` for column specification and encoding details.
- 
+
 ### Step 4: Run the Pipeline
- 
+
 ```bash
-# Modular pipeline (recommended)
-python scripts/run.py --data data/mcb_data.tsv --val data/tapestry_data.tsv
- 
-# Original single-file version (paper-exact)
-python Rebuttal_experiments.py --data data/mcb_data.tsv --val data/tapestry_data.tsv
+python src/main.py --data data/mcb_data.csv --val data/tapestry_data.csv
 ```
- 
+
 Results are saved to a timestamped folder under `results/`.
- 
-> **Windows note:** The pipeline runs with `n_jobs=1` on Windows to avoid multiprocessing issues. Results may differ slightly from the paper (Linux, `n_jobs=-1`) due to sklearn's parallel random state behavior, but are scientifically equivalent.
- 
+
 ---
- 
+
 ## Repository Structure
- 
+
 ```
 masld-phenotype-ml/
-│
-├── Rebuttal_experiments.py        # Complete single-file pipeline (paper-exact)
-│
-├── scripts/
-│   └── run.py                     # Entry point for the modular pipeline
-│
 ├── src/                           # Modular package
 │   ├── main.py                    # Orchestrates all modules
 │   ├── config.py                  # Constants: column names, labels, model grid
@@ -116,38 +107,24 @@ masld-phenotype-ml/
 ├── requirements.txt
 └── LICENSE
 ```
- 
+
 ---
- 
-## Code Map
- 
-| Task | File | Key Function |
-|------|------|-------------|
-| pRFPS score derivation | `src/prfps.py` | `build_shap_clinical_risk_score()` |
-| Model training & hyperparameter search | `src/train.py` | `train_and_evaluate_setting()` |
-| Stacking ensemble + OOF threshold selection | `src/train.py` | `get_oof_probabilities()` |
-| Covariate shift analysis | `src/evaluate.py` | `covariate_shift_analysis()` |
-| Feature selection & ablation | `src/ablation.py` | `ablation_feature_selection()` |
-| External validation | `src/validate.py` | `validate_external()` |
-| Model configuration | `src/config.py` | `MODELS_CONFIG` |
-| Full pipeline flow | `src/main.py` | `main()` |
- 
----
- 
+
+
 ## Output
- 
+
 <!-- Add example results figure here -->
- 
+
 Each run produces a results folder containing:
- 
+
 - `results_Overall.csv`, `results_LS.csv`, `results_CM.csv` — per-model metrics
 - `patient_level_*.csv` — patient-level predictions
 - `delong_prfps_vs_fib4.csv` — pRFPS vs FIB-4 statistical comparison
 - `continuous_vs_integer_prfps_delta.csv` — continuous vs integer pRFPS delta
-- Figures: ROC curves, calibration plots, SHAP bar plots, OOF probability distributions per model
+- Figures: ROC curves, calibration plots, SHAP bar plots
+
 ---
- 
- 
+
 ## License
- 
+
 MIT — see [LICENSE](LICENSE).
