@@ -1,0 +1,26 @@
+# MASLD Rapid Fibrosis Progression — pRFPS Pipeline
+# Python >= 3.9
+
+# Core ML
+scikit-learn>=1.3.0
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.10.0
+
+# Gradient boosting (optional but recommended)
+xgboost>=2.0.0
+lightgbm>=4.0.0
+
+# SHAP explainability
+shap>=0.44.0
+
+# Plotting
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# LCA (for subgroup derivation — not required to run scoring)
+stepmix>=2.2.0
+
+# Utilities
+tqdm>=4.65.0
+joblib>=1.3.0
