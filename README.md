@@ -43,7 +43,6 @@ The analysis is structured into four components:
 | Mayo Clinic Biobank (MCB) | Discovery + internal validation | LS (Liver-Specific), CM (Cardiometabolic) |
 | Tapestry Study | External validation | LS, CM |
 
-Subgroups are identified by latent class analysis (LCA) run separately — see the companion [R repository](#) for that step.
 
 ---
 
