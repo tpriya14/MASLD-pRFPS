@@ -1,31 +1,93 @@
-# Phenotype-Aware Machine Learning for Predicting Rapid Fibrosis Progression in MASLD
+# MASLD pRFPS Prediction Pipeline
+![Python](https://img.shields.io/badge/Python-3.9%2B-blue) ![License](https://img.shields.io/badge/License-MIT-green)
 
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+This repository contains the Python code for predicting rapid fibrosis progression in MASLD (Metabolic Dysfunction-Associated Steatotic Liver Disease) using a subgroup-specific interpretable risk score — **pRFPS**. The pipeline trains ML models on LCA-derived patient subgroups and derives clinically actionable risk scores via SHAP values.
 
-Code for:
-
-> **pRFPS: A Subgroup-Specific Interpretable Risk Score for Predicting Rapid
-> Fibrosis Progression in Metabolic Dysfunction-Associated Steatotic Liver Disease**
-> *Pacific Symposium on Biocomputing (PSB) 2027*
+> **Note:** Data from the Mayo Clinic Biobank (MCB) and Tapestry cohorts are not publicly available due to privacy restrictions.
 
 ---
 
 ## Overview
 
-Standard clinical tools like FIB-4 miss approximately 24% of rapid MASLD
-progressors. This pipeline addresses that gap through three steps:
+<!-- Add pipeline overview figure here -->
 
-1. **Phenotyping** — Latent Class Analysis (LCA) identifies two biologically
-   distinct subgroups: liver-specific (LS) and cardiometabolic (CM).
-2. **Subgroup-specific modelling** — Ten ML architectures trained independently
-   within each subgroup with nested feature selection.
-3. **Clinical translation** — SHAP-based attribution derives the pRFPS,
-   an integer-weighted bedside score from five routine laboratory values.
+The analysis is structured into four components:
 
-**Cohorts:**
-- Discovery: Mayo Clinic Biobank (MCB), n=5,747
-- Validation: Tapestry Study, n=7,480
+1. **Data preparation** — loading, preprocessing, and FIB-4 computation
+2. **Subgroup-specific model training** — GridSearchCV + stacking ensemble across C1/C2 subgroups
+3. **pRFPS score construction** — SHAP-derived binary risk score with clinical thresholds
+4. **Validation** — external validation on the Tapestry cohort with covariate shift analysis
+
+---
+
+## pRFPS Score Formulas
+
+<!-- Add score derivation figure here -->
+
+**pRFPS-LS** · Liver-Specific subgroup (C1) · Cutoff = 15
+```
+10·I(Age > 45) + 5·I(BUN > 21) + 5·I(ALP > 109) + 3·I(Platelet < 125) + 3·I(HDL < 61)
+```
+
+**pRFPS-CM** · Cardiometabolic subgroup (C2) · Cutoff = 18
+```
+10·I(ALP > 97) + 6·I(Platelet < 313) + 1·I(LDL > 64) + 1·I(Albumin < 13) + 1·I(AST > 39)
+```
+
+---
+
+## Study Design
+
+| Cohort | Role | Subgroups |
+|--------|------|-----------|
+| Mayo Clinic Biobank (MCB) | Discovery + internal validation | C1 (Liver-Specific), C2 (Cardiometabolic) |
+| Tapestry Study | External validation | C1, C2 |
+
+Subgroups are identified by latent class analysis (LCA) run separately — see the companion [R repository](#) for that step.
+
+---
+
+## How to Run
+
+### Prerequisites
+
+- Python ≥ 3.9
+- Packages: `scikit-learn`, `numpy`, `pandas`, `matplotlib`, `shap`, `xgboost`, `lightgbm`
+
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/<your-username>/masld-phenotype-ml.git
+cd masld-phenotype-ml
+```
+
+### Step 2: Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Step 3: Prepare Data
+
+Place your data files in the `data/` directory:
+- `data/mcb_data.tsv` — MCB cohort (tab-separated)
+- `data/tapestry_data.tsv` — Tapestry cohort (tab-separated)
+
+See `data/README.md` for column specification and encoding details.
+
+### Step 4: Run the Pipeline
+
+```bash
+# Modular pipeline (recommended)
+python scripts/run.py --data data/mcb_data.tsv --val data/tapestry_data.tsv
+
+# Original single-file version (paper-exact)
+python Rebuttal_experiments.py --data data/mcb_data.tsv --val data/tapestry_data.tsv
+```
+
+Results are saved to a timestamped folder under `results/`.
+
+> **Windows note:** The pipeline runs with `n_jobs=1` on Windows to avoid multiprocessing issues. Results may differ slightly from the paper (Linux, `n_jobs=-1`) due to sklearn's parallel random state behavior, but are scientifically equivalent.
 
 ---
 
@@ -33,173 +95,76 @@ progressors. This pipeline addresses that gap through three steps:
 
 ```
 masld-phenotype-ml/
-├── Rebuttal_experiments.py   # Complete pipeline (single-file, run this)
-├── run.py                    # Entry point wrapper
-├── config.py                 # All constants, hyperparameter grids
-├── train.py                  # Training utilities (modular reference)
-├── evaluate.py               # Evaluation: DeLong, calibration, DCA, stratified
-├── ablation.py               # Ablation: feature selection × partitioning
-├── prfps.py                  # pRFPS derivation + continuous variant comparison
+│
+├── Rebuttal_experiments.py        # Complete single-file pipeline (paper-exact)
+│
+├── scripts/
+│   └── run.py                     # Entry point for the modular pipeline
+│
+├── src/                           # Modular package
+│   ├── main.py                    # Orchestrates all modules
+│   ├── config.py                  # Constants: column names, labels, model grid
+│   ├── utils.py                   # Data loading, FIB-4, metrics, plotting
+│   ├── train.py                   # Model training, stacking ensemble, OOF thresholds
+│   ├── prfps.py                   # pRFPS score construction via SHAP (core contribution)
+│   ├── evaluate.py                # Covariate shift, patient-level outputs, metrics plots
+│   ├── ablation.py                # Feature selection, nested CV, partition ablation
+│   └── validate.py                # External validation on Tapestry cohort
+│
+├── data/
+│   └── README.md                  # Column specification and encoding
+│
+├── results/                       # Output directory (auto-created on run)
+│
 ├── requirements.txt
-├── .gitignore
-└── README.md
+└── LICENSE
 ```
 
 ---
 
-## Installation
+## Code Map
 
-```bash
-git clone https://github.com/[your-username]/masld-phenotype-ml.git
-cd masld-phenotype-ml
-pip install -r requirements.txt
-```
-
-Python 3.9 or higher required.
-
----
-
-## Usage
-
-### Full pipeline
-
-```bash
-python run.py \
-    --data path/to/mcb_data.tsv \
-    --val  path/to/tapestry_data.tsv \
-    --n_boot 1000
-```
-
-### Quick test (fast, 50 bootstrap resamples)
-
-```bash
-python run.py \
-    --data path/to/mcb_data.tsv \
-    --val  path/to/tapestry_data.tsv \
-    --n_boot 50
-```
+| Task | File | Key Function |
+|------|------|-------------|
+| pRFPS score derivation | `src/prfps.py` | `build_shap_clinical_risk_score()` |
+| Model training & hyperparameter search | `src/train.py` | `train_and_evaluate_setting()` |
+| Stacking ensemble | `src/train.py` | `get_oof_probabilities()` |
+| Covariate shift analysis | `src/evaluate.py` | `covariate_shift_analysis()` |
+| Feature selection & ablation | `src/ablation.py` | `ablation_feature_selection()` |
+| External validation | `src/validate.py` | `validate_external()` |
+| Model configuration | `src/config.py` | `MODELS_CONFIG` |
+| Full pipeline flow | `src/main.py` | `main()` |
 
 ---
 
-## Data
+## Output
 
-The MCB and Tapestry datasets contain protected health information and are
-not publicly available. Access to the Mayo Clinic Biobank can be requested
-through the [Mayo Clinic Biobank](https://www.mayo.edu/research/centers-programs/mayo-clinic-biobank/overview).
+<!-- Add example results figure here -->
 
-Expected input columns:
+Each run produces a results folder containing:
 
-| Column | Description |
-|--------|-------------|
-| `overall_progression_category2` | Target label |
-| `Subgroup_5` | LCA subgroup assignment |
-| `diagnosis_age` | Age at MASLD diagnosis (years) |
-| `Avg_BMI` | Mean BMI (kg/m²) |
-| `ALP`, `AST.x`, `ALT.x` | Liver enzymes (U/L) |
-| `PLATELET_COUNT` | Platelet count (×10⁹/L) |
-| `ALBUMIN` | Albumin (g/dL) |
-| `BUN` | Blood urea nitrogen (mg/dL) |
-| `HDL`, `LDL`, `TRIGLYCERIDE` | Lipid panel |
-| `first_FIB4` | Baseline FIB-4 score |
-| `Sex` | Sex (0=Female, 1=Male) |
-| `PNPLA3`, `TM6SF2`, `HSD17B13` | Genetic variant dosages |
+- `results_Overall.csv`, `results_C1.csv`, `results_C2.csv` — per-model metrics
+- `patient_level_*.csv` — patient-level predictions
+- `delong_prfps_vs_fib4.csv` — pRFPS vs FIB-4 statistical comparison
+- `continuous_vs_integer_prfps_delta.csv` — continuous vs integer pRFPS delta
+- Figures: ROC curves, calibration plots, SHAP bar plots
 
 ---
 
-## Key Outputs
+## References
 
-Results saved to `MASLD_Comprehensive_Analysis_*/`:
-
-| Directory | Contents |
-|-----------|----------|
-| `rebuttal_outputs/` | Master results table, DeLong comparisons |
-| `clinical_risk_score/` | pRFPS formula, feature tables |
-| `best_model_shap/` | SHAP importance plots |
-| `patient_level/` | Per-patient predictions with pRFPS and FIB-4 |
-| `patient_level/*/stratified_eval/` | Sex- and age-stratified metrics |
-| `prfps_continuous_variants/` | Binary vs continuous I() comparison |
-| `calibration_plots/` | Reliability diagrams |
-| `dca_plots/` | Decision curve analysis |
-| `lca_analysis/` | LCA BIC/entropy plots, posterior distributions |
-
----
-
-## pRFPS Formulas
-
-**Liver-specific (LS / C1)** — cutoff = 15:
-```
-pRFPS_LS = 10·I(Age > 45) + 5·I(BUN > 21) + 5·I(ALP > 109)
-         + 3·I(Platelet < 125) + 3·I(HDL < 61)
-```
-
-**Cardiometabolic (CM / C2)** — cutoff = 18:
-```
-pRFPS_CM = 10·I(ALP > 97) + 6·I(Platelet < 313) + 1·I(LDL > 64)
-         + 1·I(Albumin < 13) + 1·I(AST > 39)
-```
-
-I(·) = 1 if condition is true, 0 otherwise. Thresholds derived by
-bootstrap-stabilised Youden's J on MCB training data (50 resamples).
-
----
-
-## Methods Summary
-
-| Step | Method | Key design choice |
-|------|--------|-------------------|
-| Feature construction | Mean of pre-index measurements | Temporal separation from outcomes |
-| Subgroup discovery | LCA, BIC-optimal k=2 | Entropy=0.749, mean PP=0.89 |
-| Feature selection | Consensus of 5 methods | Nested inside training fold only |
-| Model training | GridSearchCV, 5-fold CV | 10 architectures per subgroup |
-| Threshold selection | Youden's J on OOF predictions | No test-set leakage |
-| SHAP attribution | Mean absolute \|SHAP\| (training set) | Sign-cancellation-free |
-| pRFPS weights | Normalised mean \|SHAP\| → integer | Bedside computability |
-| Validation | Tapestry, locked models, no refitting | Independent IRB |
-
----
-
-## Reproducibility
-
-All random states fixed at `seed=42`. Results directory names encode the
-configuration. See `requirements.txt` for exact package versions.
+- Lundberg, S.M. & Lee, S.I. A unified approach to interpreting model predictions. *NeurIPS* (2017).
+- Ester, M. et al. A density-based algorithm for discovering clusters in large spatial databases with noise. *KDD* (1996).
+- Zhou, W. et al. Latent class analysis-derived classification improves cancer-specific death stratification. *NPJ Precis Oncol* 7, 60 (2023).
 
 ---
 
 ## Citation
 
-```bibtex
-@inproceedings{priya2027prfps,
-  title     = {pRFPS: A Subgroup-Specific Interpretable Risk Score for
-               Predicting Rapid Fibrosis Progression in MASLD},
-  author    = {Priya, T.S. and others},
-  booktitle = {Pacific Symposium on Biocomputing},
-  year      = {2027}
-}
-```
+<!-- Add citation here once published -->
 
 ---
 
-## Conflict of Interest
+## License
 
-A.J.A. has received grants or contracts from Rhythm Pharmaceuticals,
-Boehringer Ingelheim, Vivus Inc., Vivus Pharmaceuticals, Regeneron, and
-Novo Nordisk (paid to institute); holds royalties or licenses from Phenomix
-Sciences; has received personal consultancy fees from Boehringer Ingelheim,
-Regeneron, Currax, and Structure Pharmaceuticals, and consultancy fees
-(paid to institute) from Amgen, RareStone, and Bausch Health; has received
-personal honoraria from Eli Lilly and Boehringer Ingelheim, and honoraria
-(paid to institute) from Vivus Pharmaceuticals; has received travel support
-from Currax (paid to institute); owns 10 patents, of which 3 have been issued;
-has served on Data Safety Monitoring Boards or Advisory Boards for Amgen,
-Boehringer Ingelheim, Currax, Structure Pharmaceuticals, and Regeneron; and
-holds stock options in Gila Therapeutics and Phenomix Sciences.
-All other authors declare no conflicts of interest.
-
-## LLM Disclosure
-
-Large language model assistance was used in the preparation of this manuscript
-and codebase, including support with writing, editing, and code review.
-All scientific content, analyses, results, and conclusions were generated,
-verified, and approved by the authors.
-
-
+MIT — see [LICENSE](LICENSE).
