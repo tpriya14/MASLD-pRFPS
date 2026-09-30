@@ -66,8 +66,6 @@ Place your data files in the `data/` directory:
 - `data/mcb_data.csv` — MCB cohort (tab-separated)
 - `data/tapestry_data.csv` — Tapestry cohort (tab-separated)
 
-See `data/README.md` for column specification and encoding details.
-
 ### Step 4: Run the Pipeline
 
 ```bash
@@ -106,7 +104,6 @@ masld-phenotype-ml/
 
 ## Output
 
-<!-- Add example results figure here -->
 
 Each run produces a results folder containing:
 
