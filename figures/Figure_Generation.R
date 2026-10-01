@@ -1,9 +1,4 @@
 # MASLD subgroup analyses: descriptive tables and publication figures
-#
-# Usage:
-#   1. Put the two tab-delimited input files in data/ (or set DATA_DIR).
-#   2. Run: Rscript masld_figures.R
-#
 # Outputs are written to outputs/. This script does not contain patient data.
 
 # ---- Package checks ---------------------------------------------------------
