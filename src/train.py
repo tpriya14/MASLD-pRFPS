@@ -1,9 +1,5 @@
 """
 train.py — Model training, GridSearchCV, stacking ensemble.
-Auto-split from Rebuttal_experiments.py
-"""
-"""
-Auto-generated from Rebuttal_experiments.py
 """
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import StratifiedKFold, GridSearchCV, cross_val_score
@@ -118,33 +114,6 @@ def train_and_evaluate_setting(
     stack_dir: Optional[str] = None,
 ) -> Tuple[Dict, Dict, StandardScaler]:
     """
-    Training with threshold selected from TRAINING DATA only.
-
-    [FIX-1] Threshold selection:
-      Original (wrong): threshold tuned on X_test --> leakage
-      Fixed (this):     threshold tuned on X_train --> no leakage, no wasted samples
-
-    Steps:
-      1. Fit model on X_train via GridSearchCV (5-fold CV).
-      2. Get predicted probabilities on X_TRAIN (the same data used to fit).
-      3. Apply your original threshold methods (f1, f2, balanced, youden)
-         to training probabilities -- pick the best by training F1.
-      4. Apply locked threshold to X_test ONCE for final reporting.
-
-    Why training-set threshold is valid:
-      - No test-set information used in any threshold decision --> no leakage.
-      - Simpler than OOF and easier to explain in the rebuttal.
-      - With n=752 (C2 n=325), avoids wasting samples on a separate val fold.
-      - The threshold will be slightly optimistic (model has seen train data),
-        but this is a minor bias, much less harmful than test-set leakage.
-      - Standard approach used in many clinical prediction papers when
-        cohort size is limited (Steyerberg 2019).
-
-    Rebuttal wording:
-      "Decision thresholds were selected by applying F1, F2, balanced, and
-       Youden's J criteria to the training set predicted probabilities. The
-       optimal threshold was then applied once to the held-out test set for
-       final metric reporting."
     """
     section(f"Training: {label}")
     if hyp_dir  is None: hyp_dir  = f"{results_dir}/hyperparameters/{label}"
