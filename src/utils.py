@@ -1,56 +1,5 @@
 """
 utils.py — All shared imports, constants, helpers, and model configs.
-Auto-split from Rebuttal_experiments.py
-"""
-"""
-MASLD Comprehensive Progression Analysis Pipeline
-==================================================
-REVISED VERSION -- Addresses all MLHC reviewer concerns.
-
-Reviewer erLa (score 2):
-  [FIX-1]  Threshold leakage: thresholds now tuned on VAL fold only (Youden's
-            Index). Test set accessed ONCE for final metrics.
-  [FIX-2]  Added AUROC, AUPRC, Brier score, calibration, 95% bootstrap CIs,
-            class-specific metrics (precision/recall/F1 per class, PPV, NPV,
-            sensitivity, specificity).
-  [FIX-3]  FIB-4 circularity sensitivity: models retrained excluding AST, ALT,
-            platelet count; AUROC compared.
-  [FIX-4]  Feature selection now nested inside training fold only.
-  [FIX-5]  Temporal data flow diagram added (Figure S1).
-
-Reviewer dk5o (score 3):
-  [FIX-6]  Mann-Whitney U test for subgroup progression-time difference.
-  [FIX-7]  All cited percentages recalculated from raw data and verified.
-
-Reviewer 59JH (score 3):
-  [FIX-8]  Fixed 3-year threshold sensitivity vs median-based labelling.
-  [FIX-9]  Bootstrap 95% CIs (1000 resamples) for all metrics.
-  [FIX-10] Continuous SHAP additive score vs integer pRFPS AUROC delta.
-  [FIX-11] LCA class-sensitivity: BIC + entropy plot for k=1..5.
-
-Reviewer H41R (score 3):
-  [FIX-12] SHAP weight stability (CV = SD/mean) across 5-fold CV.
-  [FIX-13] LCA subgroup bootstrap stability (centroid concordance).
-  [FIX-14] Calibration curves + Brier scores per setting.
-
-Part instructions:
-  Part 2  -- Extended metrics tables (overall + C1 + C2, both classes)
-  Part 3  -- Calibration analysis (intercept, slope, Brier, plots)
-  Part 4  -- Decision Curve Analysis vs FIB-4/NFS/treat-all/treat-none
-  Part 5  -- LCA justification output
-  Part 6  -- Included vs Excluded Table 1
-  Part 7  -- SHAP robustness (stability across folds + bootstrap)
-  Part 8  -- Comparison table with prior studies
-
-Preserved from original:
-  - Exact hyperparameter grids (GridSearchCV, NOT RandomizedSearch)
-  - No missing-value imputation (NaN rows dropped, matching original)
-  - Same stacking ensemble (top-3 by val-F1, LR meta-learner)
-  - Same feature label map, results directory structure
-  - All original helper functions (save_hyperparameter_info,
-    save_stacking_ensemble_info, compute_best_model_shap,
-    build_shap_clinical_risk_score, etc.)
-  - Class names: ["No Progression", "Rapid Progression"]
 """
 
 # =============================================================================
