@@ -1,6 +1,5 @@
 """
 main.py — Main pipeline entry point.
-Auto-split from Rebuttal_experiments.py
 """
 import os, sys
 
