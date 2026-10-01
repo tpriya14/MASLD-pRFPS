@@ -1,9 +1,6 @@
 """
 validate.py — External validation (Tapestry), pRFPS + FIB-4 comparison.
-Auto-split from Rebuttal_experiments.py
-"""
-"""
-Auto-generated from Rebuttal_experiments.py
+
 """
 from .utils import (
     log, section, OUT, results_dir,
@@ -53,14 +50,6 @@ def validate_external(setting_artifacts,
                        n_boot=500):
     """
     External validation on Tapestry using setting-specific MCB artifacts.
-
-    Critical rules:
-      - ML models use setting-specific features + setting-specific scaler.
-      - pRFPS uses raw/processed feature values, NOT scaled values.
-      - FIB-4 uses raw Tapestry data.
-      - C1 uses C1 model/scaler/features/pRFPS formula.
-      - C2 uses C2 model/scaler/features/pRFPS formula.
-      - Overall uses Overall model/scaler/features/pRFPS formula.
     """
     section("EXTERNAL VALIDATION -- Tapestry")
 
