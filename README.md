@@ -63,8 +63,8 @@ pip install -r requirements.txt
 ### Step 3: Prepare Data
 
 Place your data files in the `data/` directory:
-- `data/mcb_data.csv` — MCB cohort (tab-separated)
-- `data/tapestry_data.csv` — Tapestry cohort (tab-separated)
+- `data/mcb_data.csv` — MCB cohort
+- `data/tapestry_data.csv` — Tapestry cohort
 
 ### Step 4: Run the Pipeline
 
