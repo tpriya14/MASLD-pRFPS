@@ -92,7 +92,7 @@ masld-phenotype-ml/
 │   ├── utils.py                   # Data loading, FIB-4, metrics, plotting, model grids
 │   ├── train.py                   # Model training, hyperparameter search, thresholds
 │   ├── prfps.py                   # pRFPS score construction via SHAP (core contribution)
-│   ├── evaluate.py                # Covariate shift, patient-level outputs, metrics plots
+│   ├── evaluate.py                # Patient-level outputs, metrics plots
 │   ├── ablation.py                # Feature selection, nested CV, partition ablation
 │   └── validate.py                # External validation on Tapestry cohort
 │
