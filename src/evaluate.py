@@ -1,9 +1,6 @@
 """
 evaluate.py — SHAP, patient-level output, stratified evaluation, circularity.
-Auto-split from Rebuttal_experiments.py
-"""
-"""
-Auto-generated from Rebuttal_experiments.py
+
 """
 from .utils import (
     log, section, OUT, results_dir,
