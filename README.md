@@ -117,9 +117,4 @@ Each run produces a results folder containing:
 - `delong_prfps_vs_fib4.csv` — pRFPS vs FIB-4 statistical comparison
 - `continuous_vs_integer_prfps_delta.csv` — continuous vs integer pRFPS delta
 - Figures: ROC curves, calibration plots, SHAP bar plots
-
 ---
-
-## License
-
-MIT — see [LICENSE](LICENSE).
