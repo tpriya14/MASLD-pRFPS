@@ -1,9 +1,6 @@
 """
 ablation.py — Feature-selection × partitioning ablation, DCA, nested feature selection.
-Auto-split from Rebuttal_experiments.py
-"""
-"""
-Auto-generated from Rebuttal_experiments.py
+
 """
 from .utils import (
     log, section, OUT, results_dir,
