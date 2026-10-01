@@ -1,9 +1,6 @@
 """
 lca_tables.py — LCA sensitivity, included/excluded table, comparison with prior studies.
-Auto-split from Rebuttal_experiments.py
-"""
-"""
-Auto-generated from Rebuttal_experiments.py
+
 """
 from .utils import (
     log, section, OUT, results_dir,
@@ -195,58 +192,6 @@ def included_vs_excluded_table(df_full: pd.DataFrame,
     log("  Saved included_vs_excluded_table1.csv")
     return df_out
 
-
-# =============================================================================
-# [Part 8]  COMPARISON WITH PRIOR STUDIES
-# =============================================================================
-def comparison_with_prior_studies() -> pd.DataFrame:
-    """[Part 8] Manuscript-ready comparison table with prior MASLD ML studies."""
-    rows = [
-        {
-            "Study": "Alkhouri et al. (2020) -- Fast Progressor NASH",
-            "Population": "NASH CRN, n=648, biopsy-confirmed",
-            "Outcome": ">=2 fibrosis stage increase (biopsy)",
-            "Method": "Random Forest + clinical + histology",
-            "AUROC": "0.77",
-            "Interpretability": "Feature importance (RF)",
-            "External_Validation": "No",
-            "Class_Imbalance_Handling": "Not reported",
-            "Subgroup_Modeling": "No",
-        },
-        {
-            "Study": "FibroGENE (Trépo et al., 2019)",
-            "Population": "Multi-centre, n=2,510, biopsy",
-            "Outcome": "Significant fibrosis (F>=2, cross-sectional)",
-            "Method": "PNPLA3 + clinical logistic regression",
-            "AUROC": "0.82",
-            "Interpretability": "Linear score (interpretable)",
-            "External_Validation": "Yes (2 cohorts)",
-            "Class_Imbalance_Handling": "N/A (logistic)",
-            "Subgroup_Modeling": "No",
-        },
-        {
-            "Study": "This study (MCB, Overall)",
-            "Population": "Mayo EHR, n=752, ICD+FIB-4 labels",
-            "Outcome": "Rapid longitudinal progression",
-            "Method": "LCA + subgroup-specific ML + stacking",
-            "AUROC": "0.739 [0.659-0.816]",
-            "Interpretability": "SHAP + integer pRFPS score",
-            "External_Validation": "Yes (Tapestry, n=1,240)",
-            "Class_Imbalance_Handling": "Subgroup median threshold; Youden",
-            "Subgroup_Modeling": "Yes (C1/C2 endotypes)",
-        },
-        {
-            "Study": "This study (Tapestry, Overall)",
-            "Population": "Mayo EHR external, n=1,240",
-            "Outcome": "Rapid longitudinal progression",
-            "Method": "MCB-trained models applied directly",
-            "AUROC": "0.821",
-            "Interpretability": "Same pRFPS",
-            "External_Validation": "--",
-            "Class_Imbalance_Handling": "MCB threshold applied",
-            "Subgroup_Modeling": "Yes (C1/C2)",
-        },
-    ]
     df = pd.DataFrame(rows)
     df.to_csv(f"{OUT}/comparison_prior_studies.csv", index=False)
     log("  Saved comparison_prior_studies.csv")
