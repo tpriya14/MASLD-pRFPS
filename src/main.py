@@ -3,11 +3,9 @@ main.py — Main pipeline entry point.
 """
 import os, sys
 
-# Windows multiprocessing safety — must be before any sklearn/joblib import
 os.environ["LOKY_MAX_CPU_COUNT"] = "1"
 os.environ["OMP_NUM_THREADS"] = "1"
 
-# Support both: python src/main.py (direct) and python scripts/run.py (package)
 if __package__ is None or __package__ == "":
     # Running directly — add repo root to path and use absolute imports
     _repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
