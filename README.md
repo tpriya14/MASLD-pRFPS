@@ -13,10 +13,10 @@ This repository contains the Python code for predicting rapid fibrosis progressi
 
 The analysis is structured into four components:
 
-1. **Data preparation** — loading, preprocessing, and FIB-4 computation
-2. **Subgroup-specific model training** — individual classifiers (RF, XGBoost, LightGBM, LR, etc.) tuned via GridSearchCV across LS and CM subgroups
-3. **pRFPS score construction** — SHAP values from the best model converted to an interpretable integer risk score with clinically meaningful thresholds
-4. **Validation** — external validation on the Tapestry cohort with covariate shift analysis and pRFPS vs FIB-4 comparison
+1. **Data preparation**: loading, preprocessing, and FIB-4 computation
+2. **Subgroup-specific model training**: individual classifiers (RF, XGBoost, LightGBM, LR, etc.) tuned via GridSearchCV across LS and CM subgroups
+3. **pRFPS score construction**: SHAP values from the best model converted to an interpretable integer risk score with clinically meaningful thresholds
+4. **Validation**: external validation on the Tapestry cohort with covariate shift analysis and pRFPS vs FIB-4 comparison
 
 ---
 
