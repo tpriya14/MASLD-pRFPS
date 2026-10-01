@@ -80,18 +80,23 @@ Results are saved to a timestamped folder under `results/`.
 
 ```
 masld-phenotype-ml/
+│
+├── Rebuttal_experiments.py        # Complete single-file pipeline (paper-exact)
+│
+├── scripts/
+│   └── run.py                     # Entry point for the modular pipeline
+│
 ├── src/                           # Modular package
 │   ├── main.py                    # Orchestrates all modules
-│   ├── config.py                  # Constants: column names, labels, model grid
-│   ├── utils.py                   # Data loading, FIB-4, metrics, plotting
-│   ├── train.py                   # Model training, stacking ensemble, OOF thresholds
+│   ├── config.py                  # Constants: column names, labels, subgroup names
+│   ├── utils.py                   # Data loading, FIB-4, metrics, plotting, model grids
+│   ├── train.py                   # Model training, hyperparameter search, thresholds
 │   ├── prfps.py                   # pRFPS score construction via SHAP (core contribution)
 │   ├── evaluate.py                # Covariate shift, patient-level outputs, metrics plots
 │   ├── ablation.py                # Feature selection, nested CV, partition ablation
 │   └── validate.py                # External validation on Tapestry cohort
 │
 ├── data/
-│   └── README.md                  # Column specification and encoding
 │
 ├── results/                       # Output directory (auto-created on run)
 │
